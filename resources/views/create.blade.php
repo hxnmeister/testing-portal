@@ -21,31 +21,47 @@
                 </div>
             @enderror
 
-            <div id="answers-container">
                 @error('answers')
                     <div class="alert alert-danger mt-5">
                         {{$message}}
                     </div>
                 @enderror
 
-                @if(old('answers'))
-                    @foreach (old('answers') as $answer)
-                        <label for="answer-{{$loop->iteration}}" class="mt-3">Answer {{$loop->iteration}}:</label>
-                        <input type="text" id="answer-{{$loop->iteration}}" value="{{$answer}}" name="answers[]" class="form-control mb-1 @error('answers.'.$loop->iteration - 1) is-invalid @enderror')">
-                        @error('answers.'.$loop->iteration - 1)
-                            <div class="invalid-feedback">
-                                {{$message}}
+                <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                                Answers To Question #1
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse @error('answers.*') show @enderror">
+                            <div class="accordion-body">
+                                <div id="answers-container">
+                                    @if(old('answers'))
+                                        @foreach (old('answers') as $answer)
+                                            <label for="answer-{{$loop->iteration}}" class="mt-3">Answer {{$loop->iteration}}:</label>
+                                            <input type="text" id="answer-{{$loop->iteration}}" value="{{$answer}}" name="answers[]" class="form-control mb-1 @error('answers.'.$loop->iteration - 1) is-invalid @enderror')">
+                                            @error('answers.'.$loop->iteration - 1)
+                                                <div class="invalid-feedback">
+                                                    {{$message}}
+                                                </div>
+                                            @enderror
+                                        @endforeach
+                                    @else
+                                        <label for="answer-1" class="mt-3">Answer 1:</label>
+                                        <input type="text" id="answer-1" name="answers[]" class="form-control mb-1">
+                                    @endif
+                                </div>
+
                             </div>
-                        @enderror
-                    @endforeach
-                @else
-                    <label for="answer-1" class="mt-3">Answer 1:</label>
-                    <input type="text" id="answer-1" name="answers[]" class="form-control mb-1">
-                @endif
-            </div>
+                        </div>
+                    </div>
+                </div>
+                
 
             <div class="d-flex justify-content-between mt-4">
                 <button id="add-answer" type="button" class="btn btn-outline-info">Add answer</button>
+                
                 <button type="submit" class="btn btn-outline-success">Save</button>
             </div>
         </form>
