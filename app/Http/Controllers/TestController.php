@@ -33,7 +33,8 @@ class TestController extends Controller
         (
             [
                 'test' => 'required|string|min:10|max:255',
-                'question' => 'required|string|min:10',
+                'questions' => 'required|array|min:5',
+                'questions.*' => 'required|string|min:10',
                 'answers' => 'required|array|min:3',
                 'answers.*' => 'required|string|min:2'
             ]
