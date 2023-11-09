@@ -32,15 +32,15 @@ class TestController extends Controller
         $request->validate
         (
             [
-                'test' => 'required|string|min:10|max:255',
+                // 'test' => 'required|string|min:10|max:255',
                 'questions' => 'required|array|min:5',
                 'questions.*' => 'required|string|min:10',
-                'answers' => 'required|array|min:3',
-                'answers.*' => 'required|string|min:2'
+                // 'answers' => 'required|array|min:3',
+                // 'answers.*' => 'required|string|min:2'
             ]
         );
 
-        dd($request->answers);
+        dd($request->input('questions'));
     }
 
     /**
