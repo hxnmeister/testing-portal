@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->unsignedBigInteger('question_id');
             $table->timestamps();
-
-            $table->foreign('question_id')->references('id')->on('questions');
         });
     }
 
