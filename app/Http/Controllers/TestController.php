@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Question;
 use App\Models\Test;
 use App\Rules\QuestionsAmount;
 use Illuminate\Http\Request;
@@ -32,15 +33,34 @@ class TestController extends Controller
         $request->validate
         (
             [
-                // 'test' => 'required|string|min:10|max:255',
-                'questions' => 'required|array|min:5',
+                'testTitle' => 'required|string|min:10|max:255',
+                'questions' => 'required|array|min:2',
                 'questions.*' => 'required|string|min:10',
-                // 'answers' => 'required|array|min:3',
-                // 'answers.*' => 'required|string|min:2'
+                'answers' => 'required|array|min:2',
+                'answers.*' => 'required|array|min:2',
+                'answers.*.*' => 'required|string|min:10',
+                'isCorrect.*' => 'required|array|min:2'
             ]
         );
 
-        dd($request->input('questions'));
+        dd($request->isCorrect);
+
+        // $testTitle = $request->testTitle;
+
+        // foreach($request->questions as $qIndex => $question)
+        // {
+        //     $newQuestion = new Question();
+
+        //     $newQuestion->text = $question;
+        //     $newQuestion->save();
+
+        //     foreach($request->answers[$qIndex] as $answer)
+        //     {
+
+        //     }
+        // }
+
+        // return to_route('home')->with('success', "Test \"$testTitle\" successfully added!");
     }
 
     /**
