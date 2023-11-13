@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Test;
+use App\Rules\CompareSize;
 use App\Rules\QuestionsAmount;
 use Illuminate\Http\Request;
 
@@ -39,28 +41,38 @@ class TestController extends Controller
                 'answers' => 'required|array|min:2',
                 'answers.*' => 'required|array|min:2',
                 'answers.*.*' => 'required|string|min:10',
-                'isCorrect.*' => 'required|array|min:2'
+                'isCorrect' => ['required', 'array', new CompareSize(count($request->questions))],
+                'isCorrect.*' => 'required|array|min:1'
             ]
         );
 
-        dd($request->isCorrect);
+        $testTitle = $request->testTitle;
 
-        // $testTitle = $request->testTitle;
+        $newTest = new Test();
 
-        // foreach($request->questions as $qIndex => $question)
-        // {
-        //     $newQuestion = new Question();
+        $newTest->title = $testTitle;
+        $newTest->save();
 
-        //     $newQuestion->text = $question;
-        //     $newQuestion->save();
+        foreach($request->questions as $qIndex => $question)
+        {
+            $newQuestion = new Question();
 
-        //     foreach($request->answers[$qIndex] as $answer)
-        //     {
+            $newQuestion->text = $question;
+            $newQuestion->test_id = $newTest->id;
+            $newQuestion->save();
 
-        //     }
-        // }
+            foreach($request->answers[$qIndex] as $aIndex => $answer)
+            {
+                $newAnswer = new Answer();
 
-        // return to_route('home')->with('success', "Test \"$testTitle\" successfully added!");
+                $newAnswer->text = $answer;
+                $newAnswer->question_id = $newQuestion->id;
+                $newAnswer->is_correct = in_array($aIndex, $request->isCorrect[$qIndex]);
+                $newAnswer->save();
+            }
+        }
+
+        return to_route('home')->with('success', "Test \"$testTitle\" successfully added!");
     }
 
     /**

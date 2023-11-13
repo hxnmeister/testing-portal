@@ -6,19 +6,31 @@
         
         <div class="container" id="test-info">
             <label for="test-title">Test Title:</label>
-            <input type="text" name="testTitle" id="test-title" class="form-control" value="{{old('test-title')}}">
+            <input type="text" name="testTitle" id="test-title" class="form-control @error('testTitle') is-invalid @enderror" value="{{old('testTitle')}}">
+            @error('testTitle')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
 
-            {{-- {{dd($errors)}} --}}
             <div id="questions-container">
 
-                @if ($errors->has('questions') || $errors->has('answers'))
+                @if ($errors->has('questions') || $errors->has('answers') || $errors->has('isCorrect'))
                     <div class="alert alert-danger mb-3">
                         <ul>
                             @error('questions') <li>{{ $message }}</li> @enderror
                             @error('answers') <li>{{ $message }}</li> @enderror
+                            @error('isCorrect') <li>{{ $message }}</li> @enderror
                         </ul>
                     </div>
                 @endif
+
+                
+                {{-- <div class="alert alert-danger">
+                    @foreach ($errors->all() as $item)
+                        <li>{{ $item }}</li>
+                    @endforeach
+                </div> --}}
 
                 @if (old('questions'))
                     @foreach (old('questions') as $questionIndex => $question)
@@ -31,8 +43,16 @@
                                     </button>
                                     {{-- --}}
                                 </h2>
-                                <div id="panelsStayOpen-collapse{{$questionIndex}}" class="accordion-collapse collapse @if($errors->has('questions.'.$questionIndex) || $errors->has('answers.'.$questionIndex) || $errors->has('answers.'.$questionIndex.'.*')) show @endif">
+                                <div id="panelsStayOpen-collapse{{$questionIndex}}" class="accordion-collapse collapse @if($errors->has('questions.'.$questionIndex) || $errors->has('answers.'.$questionIndex) || $errors->has('answers.'.$questionIndex.'.*') || $errors->has('isCorrect.'.$questionIndex)) show @endif">
                                     <div class="accordion-body">
+                                        @error('isCorrect.'.$questionIndex)
+                                            <div class="alert alert-danger mt-3">
+                                                <ul>
+                                                    <li>{{ $message }}</li>
+                                                </ul>
+                                            </div>
+                                        @enderror
+                                        
                                         {{-- Блок с отображением вопросов --}}
                                         <label for="question-{{$loop->iteration}}">Question Text:</label>
                                         <input id="question-{{$loop->iteration}}" type="text" name="questions[]" class="form-control @error('questions.'.$questionIndex) is-invalid @enderror" value="{{old('questions.'.$questionIndex)}}">
@@ -44,7 +64,6 @@
                                         {{-- --}}
 
                                         <div class="container answers-container">
-
                                             @error('answers.'.$questionIndex)
                                                 <div class="alert alert-danger mt-3">
                                                     {{ $message }}
