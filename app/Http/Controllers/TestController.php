@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TestRequest;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Test;
@@ -16,7 +17,9 @@ class TestController extends Controller
      */
     public function index()
     {
-        //
+        $tests = Test::all();
+
+        return view('admin.index', compact('tests'));
     }
 
     /**
@@ -24,55 +27,54 @@ class TestController extends Controller
      */
     public function create()
     {
-        return view('create');
+        return view('admin.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TestRequest $request)
     {
         $request->validate
         (
             [
-                'testTitle' => 'required|string|min:10|max:255',
-                'questions' => 'required|array|min:2',
-                'questions.*' => 'required|string|min:10',
-                'answers' => 'required|array|min:2',
-                'answers.*' => 'required|array|min:2',
-                'answers.*.*' => 'required|string|min:10',
-                'isCorrect' => ['required', 'array', new CompareSize(count($request->questions))],
-                'isCorrect.*' => 'required|array|min:1'
+                'testTitle' => 'required|string|min:10|max:255|unique:tests,title',
+                'isCorrect' => 'required|array|min:'.count($request->questions)
             ]
         );
 
         $testTitle = $request->testTitle;
-
-        $newTest = new Test();
-
-        $newTest->title = $testTitle;
-        $newTest->save();
+        $newTest = Test::create
+        (
+            [
+                'title' => $testTitle,
+            ]
+        );
 
         foreach($request->questions as $qIndex => $question)
         {
-            $newQuestion = new Question();
-
-            $newQuestion->text = $question;
-            $newQuestion->test_id = $newTest->id;
-            $newQuestion->save();
+            $newQuestion = Question::create
+            (
+                [
+                    'text' => $question,
+                    'test_id' => $newTest->id
+                ]
+            );
 
             foreach($request->answers[$qIndex] as $aIndex => $answer)
             {
-                $newAnswer = new Answer();
-
-                $newAnswer->text = $answer;
-                $newAnswer->question_id = $newQuestion->id;
-                $newAnswer->is_correct = in_array($aIndex, $request->isCorrect[$qIndex]);
-                $newAnswer->save();
+                Answer::create
+                (
+                    [
+                        'text' => $answer,
+                        'question_id' => $newQuestion->id,
+                        'is_correct' => in_array($aIndex, $request->isCorrect[$qIndex])
+                    ]
+                );
             }
         }
 
-        return to_route('home')->with('success', "Test \"$testTitle\" successfully added!");
+        return redirect()->route('admin.home')->with('success', "Test \"$testTitle\" successfully added!");
     }
 
     /**
@@ -88,15 +90,80 @@ class TestController extends Controller
      */
     public function edit(Test $test)
     {
-        //
+        return view('admin.edit', compact('test'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Test $test)
+    public function update(TestRequest $request, Test $test)
     {
-        //
+        $request->validate
+        (
+            [
+                'testTitle' => 'required|string|min:10|max:255|unique:tests,title,'.$test->id,
+                'isCorrect' => 'required|array|min:'.count($request->questions)
+            ]
+        );
+        // dd($test->questions[0]->answers);
+        $oldQuestions = $test->questions;
+        $newQuestions = $request->questions; 
+        $oldName = $test->title;
+        $test->update(['title' => $request->testTitle]);
+
+        if(count($newQuestions) === count($oldQuestions))
+        {
+            foreach ($newQuestions as $qIndex => $question) 
+            {
+                $oldQuestions[$qIndex]->update(['text' => $question]);
+            }
+        }
+        else
+        {
+            $test->questions()->delete();
+            
+            foreach ($newQuestions as $qIndex => $question) 
+            {
+                $test->questions()->create
+                (
+                    ['text' => $question]
+                );
+            }
+        }
+
+        foreach ($request->answers as $qIndex => $question) 
+        {
+            if(count($question) === count($test->questions[$qIndex]->answers))
+            {
+                foreach ($question as $aIndex => $answer) 
+                {
+                    $test->questions[$qIndex]->answers[$aIndex]->update
+                    (
+                        [
+                            'text' => $answer,
+                            'is_correct' => in_array($aIndex, $request->isCorrect[$qIndex])
+                        ]
+                    );
+                }
+            }
+            else
+            {
+                $test->questions[$qIndex]->answers()->delete();
+
+                foreach ($question as $aIndex => $answer) 
+                {
+                    $test->questions[$qIndex]->answers()->create
+                    (
+                        [
+                            'text' => $answer,
+                            'is_correct' => in_array($aIndex, $request->isCorrect[$qIndex])
+                        ]
+                    );
+                }
+            }
+        }
+
+        return redirect()->route('admin.home')->with('success', 'Test '.$oldName.' has been updated!');
     }
 
     /**

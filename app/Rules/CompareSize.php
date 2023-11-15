@@ -20,7 +20,7 @@ class CompareSize implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if($this->size != count($value))
+        if($this->size < count($value))
         {
             $fail("Not all answers was marked!");
         }

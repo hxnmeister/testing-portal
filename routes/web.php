@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\TestController;
+use App\Models\Test;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +17,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function() 
-{
-    return view('index');
-})->name('home');
+Route::get('/', [MainController::class, 'main'])->name('mainPage');
+Route::get('test/{slug}', [MainController::class, 'showTest'])->name('showTest');
+Route::post('test/result/{test:slug}', [MainController::class, 'getResult'])->name('result');
 
-Route::resource('test', TestController::class);
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function()
+{
+    Route::get('/', [TestController::class, 'index'])->name('admin.home');
+    Route::resource('test', TestController::class);
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

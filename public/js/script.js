@@ -87,14 +87,12 @@ const addAnswer = (event) =>
 
     if(answersCount < maxAnswers)
     {
-        ++answersCount;
-
         let newAnswer = document.createElement('div');
         newAnswer.classList.add('answer', 'mt-2');
     
         newAnswer.innerHTML = 
         `
-            <label>Answer #${answersCount}:</label>
+            <label>Answer #${answersCount + 1}:</label>
             <input type="text" name="answers[${questionId}][]" class="form-control">
 
             <input type="checkbox" name="isCorrect[${questionId}][]" value="${answersCount}">
@@ -102,6 +100,8 @@ const addAnswer = (event) =>
         `;
     
         event.target.closest('.accordion-body').querySelector('.control-buttons').before(newAnswer);
+
+        ++answersCount;
     }
 }
 
