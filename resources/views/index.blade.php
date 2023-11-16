@@ -9,7 +9,7 @@
         <ul class="dropdown-menu dropdown-menu-dark">
             @if (count(Auth::user()->results) > 0)
                 @foreach (Auth::user()->results as $result)
-                    <li><a href="#" class="dropdown-item">Test #{{$loop->iteration}}: {{$result->score}} pts</a></li>
+                    <li><a href="#" class="dropdown-item">{{$result->test->title}} {{$loop->iteration}}: {{$result->score}} pts</a></li>
                 @endforeach
             @else
                 <li><a href="#" class="dropdown-item">No completed tests yet!</a></li>
@@ -30,6 +30,10 @@
         @if (session('summary'))
             <div class="alert alert-success">
                 {{ session('summary') }}
+            </div>
+        @elseif(session('toManyAttempts'))
+            <div class="alert alert-danger">
+                {{ session('toManyAttempts') }}
             </div>
         @endif
 

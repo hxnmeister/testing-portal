@@ -7,7 +7,7 @@
             </button>
             {{-- --}}
         </h2>
-        <div id="panelsStayOpen-collapse{{$questionIndex}}" class="accordion-collapse collapse @if($errors->has('questions.'.$questionIndex) || $errors->has('answers.'.$questionIndex) || $errors->has('answers.'.$questionIndex.'.*') || $errors->has('isCorrect.'.$questionIndex)) show @endif">
+        <div id="panelsStayOpen-collapse{{$questionIndex}}" class="accordion-collapse collapse @if($errors->has('questions.'.$questionIndex) || $errors->has('answers.'.$questionIndex) || $errors->has('answers.'.$questionIndex.'.*') || $errors->has('isCorrect.'.$questionIndex) || $errors->has('questionImage.'.$questionIndex)) show @endif">
             <div class="accordion-body">
                 @error('isCorrect.'.$questionIndex)
                     <div class="alert alert-danger mt-3">
@@ -16,10 +16,23 @@
                         </ul>
                     </div>
                 @enderror
+
+                <label for="question-value-{{$questionIndex}}">Question Value: </label>
+                <input type="number" name="questionValue[]" id="question-value-{{$questionIndex}}" min="1" step="1" value="{{is_object($question) ? intval($question->points) : 1 }}" class="form-control">
+                    <br>
                 
+                <label for="question-image-{{$questionIndex}}">Choose Image for Question:</label>
+                <input type="file" name="questionImage[{{$questionIndex}}]" id="question-image-{{$questionIndex}}" class="form-control @error('questionImage.'.$questionIndex) is-invalid @enderror">
+                <img src="{{asset('storage/'.$question->image)}}" alt="No-Image!" style="width: 15vw; height: 15vw">
+                @error('questionImage.'.$questionIndex)
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror
+                    <br>
                 {{-- Блок с отображением вопросов --}}
                 <label for="question-{{$loop->iteration}}">Question Text:</label>
-                <input id="question-{{$loop->iteration}}" type="text" name="questions[]" class="form-control @error('questions.'.$questionIndex) is-invalid @enderror" value="@if(old('questions.'.$questionIndex)) {{old('questions.'.$questionIndex)}} @elseif(isset($test) && is_object($question)) {{$question->text}} @endif">
+                <input id="question-{{$loop->iteration}}" type="text" name="questions[]" class="form-control @error('questions.'.$questionIndex) is-invalid @enderror" value="@if(old('questions.'.$questionIndex)) {{old('questions.'.$questionIndex)}} @elseif(is_object($question)) {{$question->text}} @endif">
                 @error('questions.'.$questionIndex)
                     <div class="invalid-feedback">
                         {{$message}}
@@ -39,7 +52,7 @@
                         @foreach (old('answers.'.$questionIndex) as $answerIndex => $answer)
                             @include('admin._answer-body')
                         @endforeach
-                    @elseif(isset($test) && is_object($question))
+                    @elseif(is_object($question))
                         @foreach ($question->answers as $answerIndex => $answer)
                             @include('admin._answer-body')
                         @endforeach

@@ -1,5 +1,5 @@
-const maxAnswers = 7;
-const maxQuestions = 5;
+const maxAnswers = 10;
+const maxQuestions = 20;
 
 let questionsContainer = document.querySelector('#questions-container');
 let questionsCount = questionsContainer.querySelectorAll('input[name="questions[]"]').length;
@@ -37,6 +37,15 @@ document.querySelector('#add-question').addEventListener('click', (event) =>
                 </h2>
                 <div id="panelsStayOpen-collapse${questionsCount}" class="accordion-collapse collapse">
                     <div class="accordion-body">
+
+                        <label for="question-value-${questionsCount}">Question Value: </label>
+                        <input type="number" name="questionValue[]" id="question-value-${questionsCount}" min="1" step="1" value="1" class="form-control">
+                        <br>
+
+                        <label for="question-image-${questionsCount}">Choose Image for Question:</label>
+                        <input type="file" name="questionImage[${questionsCount}]" id="question-image-${questionsCount}" class="form-control">
+                        <br>
+
                         <label for="question-${questionsCount}">Question Text:</label>
                         <input id="question-${questionsCount}" type="text" name="questions[]" class="form-control">
 

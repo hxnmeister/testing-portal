@@ -1,7 +1,7 @@
 @extends('admin.templates.index')
 @section('title', 'Creating Test')
 @section('content')
-    <form action="{{route('test.update', ['test' => $test->id])}}" method="post">
+    <form action="{{route('test.update', ['test' => $test->id])}}" method="post" enctype="multipart/form-data">
         @csrf
         @method('put')
         

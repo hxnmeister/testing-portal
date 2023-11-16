@@ -11,7 +11,7 @@ class Question extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['text', 'test_id'];
+    protected $fillable = ['text', 'test_id', 'points', 'image'];
     protected $with = ['answers'];
 
     public function test() :BelongsTo

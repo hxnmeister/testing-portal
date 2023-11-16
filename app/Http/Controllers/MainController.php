@@ -22,7 +22,8 @@ class MainController extends Controller
     {
         $currentTest = Test::where('slug', $slug)->first();
 
-        return view('test', compact('currentTest'));
+        return (Auth::user()->results()->where('test_id', $currentTest->id)->count() > 3) ? 
+        redirect()->route('mainPage')->with('toManyAttempts', 'To Many Attempts!') : view('test', compact('currentTest'));
     }
 
     public function getResult(Request $request, Test $test)
@@ -48,19 +49,30 @@ class MainController extends Controller
         if(!empty($errors)) return redirect()->back()->withErrors($errors)->withInput();
 
         $summary = 0;
-        $correctAnswers = 0;
+        $pointsAmount = $test->questions()->sum('points');
+        $answerIsCorrect = false;
 
         foreach ($test->questions as $qIndex => $question) 
         {
-            foreach($question->answers as $aIndex => $answer)
+            $correctAnswers = $question->answers->where('is_correct', true)->toArray();
+
+            foreach($userAnswers[$qIndex] as $answerId)
             {
-                if (isset($userAnswers[$qIndex][$aIndex]) && $answer->is_correct == true) 
+                if(count($correctAnswers) === count($userAnswers[$qIndex]) && $question->answers[$answerId]->is_correct == true)
                 {
-                    ++$summary;
+                    $answerIsCorrect = true;
+                }
+                else
+                {
+                    $answerIsCorrect = false;
+                    break;
                 }
             }
 
-            $correctAnswers += count($question->answers->where('is_correct', true));
+            if($answerIsCorrect) 
+            {
+                $summary += $question->points;
+            }
         }
 
         Result::create
@@ -72,6 +84,6 @@ class MainController extends Controller
             ]
         );
 
-        return redirect()->route('mainPage')->with('summary', 'Final result: '.$summary.'/'.$correctAnswers.' points');
+        return redirect()->route('mainPage')->with('summary', 'Final result: '.$summary.'/'.$pointsAmount.' points');
     }
 }
