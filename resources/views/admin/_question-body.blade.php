@@ -23,9 +23,9 @@
                 
                 <label for="question-image-{{$questionIndex}}">Choose Image for Question:</label>
                 <input type="file" name="questionImage[{{$questionIndex}}]" id="question-image-{{$questionIndex}}" class="form-control @error('questionImage.'.$questionIndex) is-invalid @enderror">
-                <img src="{{ is_object($question) && $question->image ? asset('storage/'.$question->image) : session('previousImagePath') }}" alt="No-Image!" style="width: 15vw; height: 15vw">
+                <img src="{{ is_object($question) && $question->image ? asset('storage/'.$question->image) : session('previousImagePath.'.$questionIndex) }}" alt="No-Image!" style="width: 15vw; height: 15vw">
                 
-                @if (is_object($question) && $question->image) {{session()->put('previousImagePath', asset('storage/'.$question->image))}} @endif
+                @if (is_object($question) && $question->image) {{session()->put('previousImagePath.'.$questionIndex, asset('storage/'.$question->image))}} @endif
                 @error('questionImage.'.$questionIndex)
                     <div class="invalid-feedback">
                         {{$message}}

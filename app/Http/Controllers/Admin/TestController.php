@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\TestRequest;
 use App\Models\Answer;
 use App\Models\Question;
@@ -82,10 +83,17 @@ class TestController extends Controller
         );
 
         $oldName = $test->title;
+        $imagesPath = [];
+
+        foreach($test->questions as $qIndex => $question)
+        {
+            if(isset($question->image)) $imagesPath[$qIndex] = $question->image;
+        }
 
         $test->update(['title' => $request->testTitle]);
         $test->questions()->delete();
-        $this->saveTest($request, $test);
+        
+        $this->saveTest($request, $test, $imagesPath);
 
         return redirect()->route('admin.home')->with('success', 'Test '.$oldName.' has been updated!');
     }
@@ -101,7 +109,7 @@ class TestController extends Controller
         return redirect()->route('admin.home')->with('success', 'Test '.$testName.' was successfully deleted!');
     }
 
-    private function saveTest(TestRequest $request, Test $test)
+    private function saveTest(TestRequest $request, Test $test, array $imagesPath = null)
     {
         foreach ($request->questions as $qIndex => $question) 
         {
@@ -119,6 +127,11 @@ class TestController extends Controller
                 $newQuestion->image = $request->file('questionImage')[$qIndex]->store('uploads', 'public');
                 $newQuestion->save();
             }
+            elseif(isset($imagesPath[$qIndex]))
+            {
+                $newQuestion->image = $imagesPath[$qIndex];
+                $newQuestion->save();
+            }
 
             foreach ($request->answers[$qIndex] as $aIndex => $answer) 
             {
@@ -132,5 +145,10 @@ class TestController extends Controller
                 );
             }
         }
+    }
+
+    public function testPreview(Test $test)
+    {
+        return view('admin.test-preview', ['currentTest' => $test]);
     }
 }

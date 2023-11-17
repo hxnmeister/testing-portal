@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\MainController;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\Admin\TestController;
 use App\Models\Test;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +24,7 @@ Route::post('test/result/{test:slug}', [MainController::class, 'getResult'])->na
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function()
 {
     Route::get('/', [TestController::class, 'index'])->name('admin.home');
+    Route::get('test-preview/{test:slug}', [TestController::class, 'testPreview'])->name('admin.testPreview');
     Route::resource('test', TestController::class);
 });
 

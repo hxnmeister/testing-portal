@@ -28,7 +28,7 @@ class TestRequest extends FormRequest
             'questions.*' => 'required|string|min:10',
             'answers' => 'required|array|min:2',
             'answers.*' => 'required|array|min:2',
-            'answers.*.*' => 'required|string|min:5',
+            'answers.*.*' => 'required|string|min:1',
             'isCorrect.*' => 'required|array|min:1',
             'questionImage.*' => 'sometimes|image'
         ];

@@ -31,7 +31,7 @@ class MainController extends Controller
         $request->validate
         (
             [
-                'userAnswers' => ['required', 'array', new CompareSize(count($test->questions))],
+                'userAnswers' => 'required|array|min:'.count($test->questions),
             ]
         );
 

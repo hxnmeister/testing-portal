@@ -20,7 +20,7 @@
                 @foreach ($tests as $test)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td><a href="#">{{$test->title}}</a></td>
+                        <td><a href="{{route('admin.testPreview', ['test' => $test->slug])}}">{{$test->title}}</a></td>
                         <td class="d-flex justify-content-between">
                             <a href="{{route('test.edit', ['test' => $test->id])}}" class="btn btn-warning">Edit</a>
                             <form action="{{ route('test.destroy', $test->id) }}" method="post">
