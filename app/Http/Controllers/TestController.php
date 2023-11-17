@@ -9,6 +9,7 @@ use App\Models\Test;
 use App\Rules\CompareSize;
 use App\Rules\QuestionsAmount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class TestController extends Controller
 {

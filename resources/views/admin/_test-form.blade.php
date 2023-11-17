@@ -1,6 +1,6 @@
 <div class="container" id="test-info">
     <label for="test-title">Test Title:</label>
-    <input type="text" name="testTitle" id="test-title" class="form-control @error('testTitle') is-invalid @enderror" value="@if(!isset($test)) {{old('testTitle')}} @else {{$test->title}} @endif">
+    <input type="text" name="testTitle" id="test-title" class="form-control @error('testTitle') is-invalid @enderror" value="{{ isset($test) ? $test->title : old('testTitle') }}">
     @error('testTitle')
         <div class="invalid-feedback">
             {{ $message }}

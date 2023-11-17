@@ -21,8 +21,8 @@ class MainController extends Controller
     public function showTest($slug)
     {
         $currentTest = Test::where('slug', $slug)->first();
-
-        return (Auth::user()->results()->where('test_id', $currentTest->id)->count() > 3) ? 
+        
+        return (Auth::user()->results()->where('test_id', $currentTest->id)->count() === 3) ? 
         redirect()->route('mainPage')->with('toManyAttempts', 'To Many Attempts!') : view('test', compact('currentTest'));
     }
 

@@ -23,7 +23,9 @@
                 
                 <label for="question-image-{{$questionIndex}}">Choose Image for Question:</label>
                 <input type="file" name="questionImage[{{$questionIndex}}]" id="question-image-{{$questionIndex}}" class="form-control @error('questionImage.'.$questionIndex) is-invalid @enderror">
-                <img src="{{asset('storage/'.$question->image)}}" alt="No-Image!" style="width: 15vw; height: 15vw">
+                <img src="{{ is_object($question) && $question->image ? asset('storage/'.$question->image) : session('previousImagePath') }}" alt="No-Image!" style="width: 15vw; height: 15vw">
+                
+                @if (is_object($question) && $question->image) {{session()->put('previousImagePath', asset('storage/'.$question->image))}} @endif
                 @error('questionImage.'.$questionIndex)
                     <div class="invalid-feedback">
                         {{$message}}
@@ -31,8 +33,8 @@
                 @enderror
                     <br>
                 {{-- Блок с отображением вопросов --}}
-                <label for="question-{{$loop->iteration}}">Question Text:</label>
-                <input id="question-{{$loop->iteration}}" type="text" name="questions[]" class="form-control @error('questions.'.$questionIndex) is-invalid @enderror" value="@if(old('questions.'.$questionIndex)) {{old('questions.'.$questionIndex)}} @elseif(is_object($question)) {{$question->text}} @endif">
+                <label for="question-{{$questionIndex}}">Question Text:</label>
+                <input id="question-{{$questionIndex}}" type="text" name="questions[]" class="form-control @error('questions.'.$questionIndex) is-invalid @enderror" value="{{is_object($question) ? $question->text : old('questions.'.$questionIndex)}}">
                 @error('questions.'.$questionIndex)
                     <div class="invalid-feedback">
                         {{$message}}
