@@ -18,14 +18,30 @@
                 @enderror
 
                 <label for="question-value-{{$questionIndex}}">Question Value: </label>
-                <input type="number" name="questionValue[]" id="question-value-{{$questionIndex}}" min="1" step="1" value="{{is_object($question) ? intval($question->points) : 1 }}" class="form-control">
+                <input type="number" name="questionValue[]" id="question-value-{{$questionIndex}}" min="1" step="1" value="{{is_object($question) ? intval($question->points) : old('questionValue.'.$questionIndex) }}" class="form-control">
                     <br>
                 
                 <label for="question-image-{{$questionIndex}}">Choose Image for Question:</label>
                 <input type="file" name="questionImage[{{$questionIndex}}]" id="question-image-{{$questionIndex}}" class="form-control @error('questionImage.'.$questionIndex) is-invalid @enderror">
-                <img src="{{ is_object($question) && $question->image ? asset('storage/'.$question->image) : session('previousImagePath.'.$questionIndex) }}" alt="No-Image!" style="width: 15vw; height: 15vw">
                 
-                @if (is_object($question) && $question->image) {{session()->put('previousImagePath.'.$questionIndex, asset('storage/'.$question->image))}} @endif
+                @php
+                    $pathToImage = "";
+                    $currentIndex = 'previousImagePath.'.$questionIndex;
+
+                    if(is_object($question) && $question->image)
+                    {
+                        $pathToImage = asset('storage/'.$question->image);
+                        session()->put($currentIndex, $pathToImage);
+                    }
+                    else 
+                    {
+                        $pathToImage = session($currentIndex);
+                        session()->forget($currentIndex);
+                    }
+                @endphp
+
+                <img src="{{ $pathToImage }}" alt="No-Image!" style="width: 15vw; height: 15vw">
+
                 @error('questionImage.'.$questionIndex)
                     <div class="invalid-feedback">
                         {{$message}}

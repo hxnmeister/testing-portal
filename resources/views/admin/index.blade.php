@@ -13,16 +13,16 @@
         <table class="table table-bordered">
             <thead>
                 <th>#</th>
-                <th>Test Title</th>
+                <th>Test Title (click for preview)</th>
                 <th style="width: 8vw">Controlls</th>
             </thead>
             <tbody>
                 @foreach ($tests as $test)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td><a href="{{route('admin.testPreview', ['test' => $test->slug])}}">{{$test->title}}</a></td>
+                        <td><a href="{{route('admin.testPreview', ['test' => $test->slug])}}" class="link-info link-offset-3-hover">{{$test->title}}</a></td>
                         <td class="d-flex justify-content-between">
-                            <a href="{{route('test.edit', ['test' => $test->id])}}" class="btn btn-warning">Edit</a>
+                            <a href="{{route('test.edit', ['test' => $test->id])}}" class="btn btn-outline-warning">Edit</a>
                             <form action="{{ route('test.destroy', $test->id) }}" method="post">
                                 @csrf
                                 @method('delete')
