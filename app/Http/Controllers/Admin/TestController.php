@@ -7,16 +7,9 @@ use App\Http\Requests\TestRequest;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Test;
-use App\Rules\CompareSize;
-use App\Rules\QuestionsAmount;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
 
 class TestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $tests = Test::all();
@@ -24,17 +17,11 @@ class TestController extends Controller
         return view('admin.index', compact('tests'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(TestRequest $request)
     {
         $request->validate
@@ -45,33 +32,25 @@ class TestController extends Controller
             ]
         );
 
+        //Зберігаю стару назву щоб показати користувачеві який тест було додано
         $testTitle = $request->testTitle;
         $newTest = Test::create(['title' => $testTitle]);
-
+        
         $this->saveTest($request, $newTest);
 
         return redirect()->route('admin.home')->with('success', "Test \"$testTitle\" successfully added!");
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Test $test)
     {
-        //
+        
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Test $test)
     {
         return view('admin.edit', compact('test'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(TestRequest $request, Test $test)
     {
         $request->validate
@@ -82,17 +61,22 @@ class TestController extends Controller
             ]
         );
 
+        //Зберігаю стару назву тесту щоб показати який тест було змінено
         $oldName = $test->title;
+        //Масив у якому буде зебережено усі шляхи до зображень які вже є в БД. Ці шляхи будуть використані для перезапису в БД
         $imagesPath = [];
 
+        //Циклом перебираємо наявні питання
         foreach($test->questions as $qIndex => $question)
         {
+            //Якщо питання має шлях до зображення то записуємо його до масиву
             if(isset($question->image)) $imagesPath[$qIndex] = $question->image;
         }
 
         $test->update(['title' => $request->testTitle]);
         $test->questions()->delete();
         
+        //Потім передаємо масив для того щоб перезаписати шляхи до зображень
         $this->saveTest($request, $test, $imagesPath);
 
         return redirect()->route('admin.home')->with('success', 'Test '.$oldName.' has been updated!');
@@ -111,6 +95,8 @@ class TestController extends Controller
 
     private function saveTest(TestRequest $request, Test $test, array $imagesPath = null)
     {
+        //Змінна $imagesPath використовується для перезапису шляхів до зображень
+        
         foreach ($request->questions as $qIndex => $question) 
         {
             $newQuestion = Question::create
