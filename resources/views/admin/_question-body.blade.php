@@ -28,25 +28,6 @@
                 
                 <label for="question-image-{{$questionIndex}}">Choose Image for Question:</label>
                 <input type="file" name="questionImage[{{$questionIndex}}]" id="question-image-{{$questionIndex}}" class="form-control @error('questionImage.'.$questionIndex) is-invalid @enderror">
-                
-                @php
-                    $pathToImage = "";
-                    $currentIndex = 'previousImagePath.'.$questionIndex;
-
-                    if(is_object($question) && $question->image)
-                    {
-                        $pathToImage = asset('storage/'.$question->image);
-                        session()->put($currentIndex, $pathToImage);
-                    }
-                    else 
-                    {
-                        $pathToImage = session($currentIndex);
-                        session()->forget($currentIndex);
-                    }
-                @endphp
-
-                <img src="{{ $pathToImage }}" alt="No-Image!" style="width: 15vw; height: 15vw">
-                <br>
 
                 @error('questionImage.'.$questionIndex)
                     <div class="invalid-feedback">
