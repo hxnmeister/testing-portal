@@ -7,7 +7,7 @@
             </button>
             {{-- --}}
         </h2>
-        <div id="panelsStayOpen-collapse{{$questionIndex}}" class="accordion-collapse collapse @if($errors->has('questions.'.$questionIndex) || $errors->has('answers.'.$questionIndex) || $errors->has('answers.'.$questionIndex.'.*') || $errors->has('isCorrect.'.$questionIndex) || $errors->has('questionImage.'.$questionIndex)) show @endif">
+        <div id="panelsStayOpen-collapse{{$questionIndex}}" class="accordion-collapse collapse @if($errors->has('questions.'.$questionIndex) || $errors->has('answers.'.$questionIndex) || $errors->has('answers.'.$questionIndex.'.*') || $errors->has('isCorrect.'.$questionIndex) || $errors->has('questionImage.'.$questionIndex) || $errors->has('questionValue.'.$questionIndex)) show @endif">
             <div class="accordion-body">
                 @error('isCorrect.'.$questionIndex)
                     <div class="alert alert-danger mt-3">
@@ -18,8 +18,13 @@
                 @enderror
 
                 <label for="question-value-{{$questionIndex}}">Question Value: </label>
-                <input type="number" name="questionValue[]" id="question-value-{{$questionIndex}}" min="1" step="1" value="{{is_object($question) ? intval($question->points) : old('questionValue.'.$questionIndex) }}" class="form-control">
-                    <br>
+                <input type="number" name="questionValue[]" id="question-value-{{$questionIndex}}" min="1" step="1" value="{{is_object($question) ? intval($question->points) : old('questionValue.'.$questionIndex) }}" class="form-control @error('questionValue.'.$questionIndex) is-invalid @enderror">
+                @error('questionValue.'.$questionIndex)
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror
+                <br>
                 
                 <label for="question-image-{{$questionIndex}}">Choose Image for Question:</label>
                 <input type="file" name="questionImage[{{$questionIndex}}]" id="question-image-{{$questionIndex}}" class="form-control @error('questionImage.'.$questionIndex) is-invalid @enderror">
@@ -41,6 +46,7 @@
                 @endphp
 
                 <img src="{{ $pathToImage }}" alt="No-Image!" style="width: 15vw; height: 15vw">
+                <br>
 
                 @error('questionImage.'.$questionIndex)
                     <div class="invalid-feedback">

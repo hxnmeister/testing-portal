@@ -6,7 +6,8 @@
             {{ $message }}
         </div>
     @enderror
-
+    <br>
+    
     <div id="questions-container">
         @if ($errors->has('questions') || $errors->has('answers') || $errors->has('isCorrect'))
             <div class="alert alert-danger mb-3">

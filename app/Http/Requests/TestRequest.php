@@ -30,7 +30,8 @@ class TestRequest extends FormRequest
             'answers.*' => 'required|array|min:2',
             'answers.*.*' => 'required|string|min:1',
             'isCorrect.*' => 'required|array|min:1',
-            'questionImage.*' => 'sometimes|image'
+            'questionImage.*' => 'sometimes|image',
+            'questionValue.*' => 'sometimes|required|numeric|min:1'
         ];
     }
 }

@@ -163,19 +163,54 @@ return [
     |
     */
 
-    'custom' => [
-        'test' => 
+    'custom' => 
+    [
+        'testTitle' => 
         [
-            'required' => ':attribute cannot be empty!',
+            'required' => 'The :attribute is required!',
+            'min' => ':attribute must have at least 10 characters!',
+            'max' => 'Oh, wow! That`s too long for :attribute. Max: :max characters!',
+            'unique' => 'Sorry, but this name ":input" is already taken!'
         ],
-        'question' =>
+        'questions' =>
         [
-            'required' => ':attribute text is required, at least 10 characters!'
+            'required' => ':attribute must have at least few items!',
+            'min' => ':attribute must have minimum :min items!'
         ],
-        'answers' => 
+        'questions.*' =>
         [
-            'min' => 'Must be at least 3 :attribute'
+            'required' => 'The :attribute cannot be empty!',
+            'min' => 'Oops, looks like you`re a bit shy. Please add a couple more characters to reach the required :min!'
         ],
+        'answers' =>
+        [
+            'required' => 'Not all Questions have :attribute!',
+            'min' => ':attribute must have minimum :min items!'
+        ],
+        'answers.*' =>
+        [
+            'required' => ':attribute is required!',
+            'min' => ':attribute must have at least :min items!'
+        ],
+        'isCorrect' => 
+        [
+            'required' => 'It seems that not all Answers are marked as Correct!',
+            'min' => 'Every Question must have at least one Correct Answer!'
+        ],
+        'questionImage.*' => 
+        [
+            'image' => 'Please, load only images (jpg, jpeg, png, bmp, gif, svg, or webp)!',
+        ],
+        'questionValue.*' => 
+        [
+            'required' => 'The :attribute cannot be empty!',
+            'min' => 'The :attribute cannot be less than :min!'
+        ],
+        'userAnswers' => 
+        [
+            'required' => ':attribute is required!',
+            'min' => 'Must be at least :min marked :attribute!'
+        ]
     ],
 
     /*
@@ -191,10 +226,16 @@ return [
 
     'attributes' => 
     [
-        'test' => 'Test Title',
-        'question' => 'Question',
+        'testTitle' => 'Test Title',
+        'questions' => 'Questions',
+        'questions.*' => 'Question Text',
         'answers' => 'Answers',
-        'answers.*' => 'Answer'
+        'answers.*' => 'Answers',
+        'answers.*.*' => 'Answer Text',
+        'isCorrect' => 'Correct Answers',
+        'questionImage.*' => 'Image for Question',
+        'questionValue.*' => 'Question Value',
+        'userAnswers' => 'Answers'
     ],
 
 ];

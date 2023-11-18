@@ -5,6 +5,5 @@
         @csrf
         @include('admin._test-form')
     </form>
-
     <script src="{{ asset('js/script.js') }}"></script>
 @endsection
